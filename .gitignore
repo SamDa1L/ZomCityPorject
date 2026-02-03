@@ -3,9 +3,12 @@
 # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
 #
 .utmp/
+/.claude
+/AGENTS.md
 /[Ll]ibrary/
 /[Tt]emp/
 /[Tt]emp[Ll]ogs/
+/[Ss]uggest[Ll]ogs/
 /[Oo]bj/
 /[Bb]uild/
 /[Bb]uilds/
