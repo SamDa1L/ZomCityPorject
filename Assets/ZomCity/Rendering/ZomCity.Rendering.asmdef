@@ -1,0 +1,16 @@
+﻿{
+  "name": "ZomCity.Rendering",
+  "rootNamespace": "ZomCity",
+  "references": [
+    "ZomCity.Core"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

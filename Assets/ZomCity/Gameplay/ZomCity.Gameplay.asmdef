@@ -1,0 +1,18 @@
+﻿{
+  "name": "ZomCity.Gameplay",
+  "rootNamespace": "ZomCity",
+  "references": [
+    "ZomCity.Core",
+    "ZomCity.Data",
+    "ZomCity.Rendering"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

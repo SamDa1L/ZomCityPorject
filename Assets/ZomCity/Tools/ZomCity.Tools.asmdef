@@ -1,0 +1,22 @@
+﻿{
+  "name": "ZomCity.Tools",
+  "rootNamespace": "ZomCity",
+  "references": [
+    "ZomCity.Core",
+    "ZomCity.Data",
+    "ZomCity.Rendering",
+    "ZomCity.Gameplay",
+    "ZomCity.UI"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}
