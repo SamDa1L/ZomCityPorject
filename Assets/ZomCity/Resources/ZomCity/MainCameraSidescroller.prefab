@@ -1,0 +1,109 @@
+﻿%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &100000
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 400000}
+  - component: {fileID: 11400000}
+  m_Layer: 0
+  m_Name: MainCameraSidescroller
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &400000
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100000}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0fe1fedb227e9349951ae53775afe3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RtWidth: 800
+  RtHeight: 450
+  PixelsPerUnit: 24
+  MinWindowScale: 2
+  EnforceMinWindow: 1
+  FitMode: 0
+  AimPlaneZ: 0
+  CameraZoom: 2
+  EnablePixelSnapInOrthographicLegacy: 1
+  WorldCamera: {fileID: 0}
+  DefaultFollowTargetTag: Player
+  DefaultFollowTargetChildName: Body
+  DefaultRebindInterval: 0.25
+  DefaultLostTargetReportDelay: 1
+  DefaultForceCenterOnBind: 1
+  DefaultFollowSmoothness: 0.13
+  DefaultOffsetX: 0
+  DefaultOffsetY: 0
+  DefaultAutoSwitchByInput: 1
+  DefaultAimStateTriggerMode: 1
+  DefaultDragObserveRangePx: 480
+  DefaultCameraProfile: {fileID: 11400000, guid: 6899b01520264291af6193ca44a0e3f7, type: 2}
+  ApplyStateProfileOnBoot: 1
+  ExploreState:
+    ProjectionMode: 0
+    FieldOfView: 26
+    PitchDown: 10
+    Yaw: 0
+    Distance: 12
+    FramingAnchorX: 0.38
+    FramingAnchorY: 0.46
+    Smoothness: 0.13
+    EnablePixelSnapInOrthographicLegacy: 1
+  AimState:
+    ProjectionMode: 0
+    FieldOfView: 22
+    PitchDown: 9
+    Yaw: 0
+    Distance: 10
+    FramingAnchorX: 0.5
+    FramingAnchorY: 0.48
+    Smoothness: 0.08
+    EnablePixelSnapInOrthographicLegacy: 1
+  SprintState:
+    ProjectionMode: 0
+    FieldOfView: 30
+    PitchDown: 12
+    Yaw: 0
+    Distance: 14
+    FramingAnchorX: 0.38
+    FramingAnchorY: 0.44
+    Smoothness: 0.18
+    EnablePixelSnapInOrthographicLegacy: 1
+  DeadState:
+    ProjectionMode: 0
+    FieldOfView: 38
+    PitchDown: 20
+    Yaw: 0
+    Distance: 18
+    FramingAnchorX: 0.5
+    FramingAnchorY: 0.56
+    Smoothness: 0.24
+    EnablePixelSnapInOrthographicLegacy: 0

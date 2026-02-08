@@ -1,10 +1,10 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace ZomCity
 {
     /// <summary>
-    /// Code-only boot hook for M0.1 to freeze time/frame pacing and spawn the guard.
-    /// A dedicated Boot scene/state machine will be layered in M0+/M1.
+    /// 纯代码 Boot 钩子（M0.1）。
+    /// 启动时冻结 Time 和 FramePacing 参数并创建 Guard。
     /// </summary>
     public static class ZomCityBootRuntime
     {
@@ -16,4 +16,3 @@ namespace ZomCity
         }
     }
 }
-

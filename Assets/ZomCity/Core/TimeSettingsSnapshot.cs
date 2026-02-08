@@ -1,7 +1,8 @@
-namespace ZomCity
+﻿namespace ZomCity
 {
     /// <summary>
-    /// A compact snapshot of the engine-level time / frame pacing knobs we freeze in M0.
+    /// M0 冻结时间与帧率步进参数的快照。
+    /// 该结构用于比对、回写与事件上报。
     /// </summary>
     public struct TimeSettingsSnapshot
     {
@@ -11,4 +12,3 @@ namespace ZomCity
         public int TargetFrameRate;
     }
 }
-

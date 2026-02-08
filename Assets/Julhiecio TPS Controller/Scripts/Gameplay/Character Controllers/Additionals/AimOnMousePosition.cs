@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using JUTPSActions;
+using ZomCity;
 namespace JUTPS.ActionScripts
 {
     [AddComponentMenu("JU TPS/Third Person System/Additionals/Aim On Mouse Position")]
@@ -16,13 +17,45 @@ namespace JUTPS.ActionScripts
 
         void Update()
         {
-            if (Enabled == false || cam == null)
+            if (Enabled == false)
             {
                 AimPosition = Vector3.zero;
                 TPSCharacter.LookAtPosition = AimPosition;
                 return;
             }
+
             Vector2 mousePosition = JUInputSystem.JUInput.GetMousePosition();
+
+            if (TryGetPixelViewportAimPoint(mousePosition, out var planeAimPosition))
+            {
+                if (PreventResetingAimPosition)
+                {
+                    if (planeAimPosition != Vector3.zero)
+                        AimPosition = Vector3.Lerp(AimPosition, planeAimPosition, 10 * Time.deltaTime);
+                }
+                else
+                {
+                    AimPosition = Vector3.Lerp(AimPosition, planeAimPosition, 10 * Time.deltaTime);
+                }
+
+                if (TwoDimensional)
+                {
+                    Vector3 pivotPosition = transform.position;
+                    pivotPosition.y = TPSCharacter.HumanoidSpine.position.y;
+                    Debug.DrawLine(pivotPosition, AimPosition, Color.red);
+                }
+
+                TPSCharacter.LookAtPosition = AimPosition;
+                return;
+            }
+
+            if (cam == null)
+            {
+                AimPosition = Vector3.zero;
+                TPSCharacter.LookAtPosition = AimPosition;
+                return;
+            }
+
             if (TwoDimensional)
             {
                 //Create a ray on mouse position
@@ -37,7 +70,8 @@ namespace JUTPS.ActionScripts
                 MousePosition.z = transform.position.z;
 
                 //Get Horizontal Distance
-                Vector3 mousePosNoHeight = MousePosition; mousePosNoHeight.y = pivotPosition.y;
+                Vector3 mousePosNoHeight = MousePosition;
+                mousePosNoHeight.y = pivotPosition.y;
                 float HorizontalDistance = Vector3.Distance(pivotPosition, mousePosNoHeight);
 
                 //Modify mouse position
@@ -65,7 +99,30 @@ namespace JUTPS.ActionScripts
                         AimPosition = Vector3.zero;
                 }
             }
+
             TPSCharacter.LookAtPosition = AimPosition;
+        }
+
+        private bool TryGetPixelViewportAimPoint(Vector2 mousePosition, out Vector3 aimPoint)
+        {
+            aimPoint = default;
+            var viewport = PixelViewportManager.Instance;
+            if (viewport == null)
+            {
+                return false;
+            }
+
+            if (!viewport.TryScreenToAimPoint(mousePosition, out aimPoint))
+            {
+                var rtPixel = viewport.ScreenToRtPixelClamped(mousePosition);
+                if (!viewport.TryRtPixelToAimPoint(rtPixel, out aimPoint))
+                {
+                    return false;
+                }
+            }
+
+            aimPoint.z = viewport.AimPlaneZ;
+            return true;
         }
         private void OnDrawGizmos()
         {

@@ -2152,7 +2152,7 @@ MonoBehaviour:
   DecreaseSpeedOnJump: 0
   BlockVerticalInput: 1
   BlockHorizontalInput: 0
-  BlockFireModeOnCursorVisible: 1
+  BlockFireModeOnCursorVisible: 0
   BlockFireModeOnPunching: 1
   EnablePunchAttacks: 1
   EnableRoll: 1

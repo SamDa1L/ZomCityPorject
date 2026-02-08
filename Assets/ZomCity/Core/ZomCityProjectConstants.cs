@@ -3,14 +3,14 @@
 namespace ZomCity
 {
     /// <summary>
-    /// Single-source-of-truth constants for project paths and cross-system contracts.
-    /// Tools and runtime code should reference this class rather than hard-coding strings.
+    /// 项目路径与跨系统合同的“单一事实源”（常量集中管理）。
+    /// 工具链与运行时代码必须引用这里，禁止散落硬编码字符串。
     /// </summary>
     public static class ZomCityProjectConstants
     {
         public static class Paths
         {
-            // Paths are project-root-relative (not absolute).
+            // 统一使用“工程根目录相对路径”（禁止硬编码绝对路径）。
             public const string DocsRoot = "Docs/ZomCity/";
             public const string ReportsOutDir = "TempLogs/ZomCityReports/";
 

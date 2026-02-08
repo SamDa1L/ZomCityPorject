@@ -1,10 +1,11 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace ZomCity
 {
     /// <summary>
-    /// Detects and restores any runtime tampering of the frozen time/frame pacing knobs.
+    /// 监测并回写运行时被篡改的时间和帧率步进参数。
+    /// 这些参数在 M0 阶段为冻结状态。
     /// </summary>
     [DefaultExecutionOrder(10000)]
     public sealed class TimeSettingsGuard : MonoBehaviour
@@ -42,7 +43,7 @@ namespace ZomCity
             s_instance = this;
             DontDestroyOnLoad(gameObject);
 
-            // Apply once on startup to ensure a single authoritative entry point.
+            // 启动时先应用一次，确保单一权威入口生效。
             ZomCityTimeSettingsAuthority.ApplyAuthoritative();
         }
 
@@ -81,10 +82,10 @@ namespace ZomCity
                 return;
             }
 
-            // Always restore (even in release builds) to avoid long-tail jitter / physics issues.
+            // 无论是否为发布构建都要回写，避免长期抖动和物理步进异常。
             ZomCityTimeSettingsAuthority.ApplyAuthoritative();
 
-            // Report only in development contexts.
+            // 仅在开发构建上报事件，发布构建只回写不刷日志。
             if (!Debug.isDebugBuild)
             {
                 return;
@@ -101,4 +102,3 @@ namespace ZomCity
         }
     }
 }
-

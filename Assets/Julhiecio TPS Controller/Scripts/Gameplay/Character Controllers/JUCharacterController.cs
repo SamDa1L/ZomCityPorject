@@ -608,18 +608,25 @@ namespace JUTPS
             //Weapon Control
             if (IsItemEquiped)
             {
+                // Prefer the active runtime camera to keep weapon correction aligned with rendered output.
+                Camera activeAimCamera = (Camera.main != null) ? Camera.main : MyCamera;
+
                 //Weapon Orientation with camera
-                if (MyCamera != null)
+                if (activeAimCamera != null)
                 {
                     if (WeaponInUseRightHand != null)
                     {
-                        Vector3 orientation = (LookAtPosition != Vector3.zero) ? GetCurrentWeaponLookDirection() : MyCamera.transform.forward;
-                        WeaponInUseRightHand.SetWeaponOrientation(MyCamera.transform.position, orientation);
+                        bool hasLookPoint = LookAtPosition != Vector3.zero;
+                        Vector3 orientation = hasLookPoint ? GetCurrentWeaponLookDirection() : activeAimCamera.transform.forward;
+                        Vector3 correctionOrigin = hasLookPoint ? Vector3.zero : activeAimCamera.transform.position;
+                        WeaponInUseRightHand.SetWeaponOrientation(correctionOrigin, orientation);
                     }
                     if (WeaponInUseLeftHand != null)
                     {
-                        Vector3 orientation = (LookAtPosition != Vector3.zero) ? GetCurrentWeaponLookDirection() : MyCamera.transform.forward;
-                        WeaponInUseLeftHand.SetWeaponOrientation(MyCamera.transform.position, orientation);
+                        bool hasLookPoint = LookAtPosition != Vector3.zero;
+                        Vector3 orientation = hasLookPoint ? GetCurrentWeaponLookDirection() : activeAimCamera.transform.forward;
+                        Vector3 correctionOrigin = hasLookPoint ? Vector3.zero : activeAimCamera.transform.position;
+                        WeaponInUseLeftHand.SetWeaponOrientation(correctionOrigin, orientation);
                     }
                 }
                 else

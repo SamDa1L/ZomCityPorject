@@ -1,14 +1,14 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace ZomCity
 {
     /// <summary>
-    /// Single source of truth for time / frame pacing settings (M0).
-    /// Only Boot/Settings should apply changes. Any runtime tampering is guarded.
+    /// Time 和 FramePacing 参数的单一事实源。
+    /// 仅允许 Boot 和 Settings 单点入口修改。
     /// </summary>
     public static class ZomCityTimeSettingsAuthority
     {
-        // MVP frozen defaults (from ZomCity plan).
+        // MVP 阶段冻结默认值，来源于项目计划口径。
         public const float FixedDeltaTime = 1f / 60f;
         public const float MaximumDeltaTime = 1f / 15f;
         public const int VSyncCount = 0;
@@ -34,4 +34,3 @@ namespace ZomCity
         }
     }
 }
-
