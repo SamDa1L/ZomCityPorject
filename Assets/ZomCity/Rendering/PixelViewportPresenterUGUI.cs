@@ -10,12 +10,15 @@ namespace ZomCity
     [DefaultExecutionOrder(-9990)]
     public sealed class PixelViewportPresenterUGUI : MonoBehaviour
     {
+        private const string DisplayBridgeCameraName = "[ZomCity]DisplayBridgeCamera";
+
         [Tooltip("若为空则使用 PixelViewportManager.Instance。")]
         public PixelViewportManager Viewport;
 
         [Header("可选覆盖")]
         public Canvas OutputCanvas;
         public RawImage OutputImage;
+        public Camera DisplayBridgeCamera;
 
         private void Awake()
         {
@@ -27,6 +30,7 @@ namespace ZomCity
             }
 
             EnsureCanvasAndImage();
+            EnsureDisplayBridgeCamera();
         }
 
         private void OnEnable()
@@ -78,6 +82,35 @@ namespace ZomCity
                 OutputImage = imgGo.AddComponent<RawImage>();
                 OutputImage.raycastTarget = false;
             }
+        }
+
+        private void EnsureDisplayBridgeCamera()
+        {
+            if (DisplayBridgeCamera == null)
+            {
+                var existing = transform.Find(DisplayBridgeCameraName);
+                if (existing != null)
+                {
+                    DisplayBridgeCamera = existing.GetComponent<Camera>();
+                }
+            }
+
+            if (DisplayBridgeCamera == null)
+            {
+                var cameraGo = new GameObject(DisplayBridgeCameraName);
+                cameraGo.transform.SetParent(transform, worldPositionStays: false);
+                DisplayBridgeCamera = cameraGo.AddComponent<Camera>();
+            }
+
+            DisplayBridgeCamera.clearFlags = CameraClearFlags.Depth;
+            DisplayBridgeCamera.backgroundColor = Color.clear;
+            DisplayBridgeCamera.cullingMask = 0;
+            DisplayBridgeCamera.depth = -1000f;
+            DisplayBridgeCamera.allowHDR = false;
+            DisplayBridgeCamera.allowMSAA = false;
+            DisplayBridgeCamera.nearClipPlane = 0.01f;
+            DisplayBridgeCamera.farClipPlane = 10f;
+            DisplayBridgeCamera.enabled = true;
         }
 
         private void Apply()

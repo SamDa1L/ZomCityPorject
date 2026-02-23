@@ -1,0 +1,23 @@
+{
+    "Rows": [
+        {
+            "LootTableID": "LT_TEST_COMMON",
+            "RollMin": 1,
+            "RollMax": 2,
+            "Entries": [
+                {
+                    "ItemID": "MAT_SCRAP",
+                    "Weight": 100,
+                    "MinQty": 1,
+                    "MaxQty": 3
+                },
+                {
+                    "ItemID": "CON_BANDAGE",
+                    "Weight": 40,
+                    "MinQty": 1,
+                    "MaxQty": 1
+                }
+            ]
+        }
+    ]
+}

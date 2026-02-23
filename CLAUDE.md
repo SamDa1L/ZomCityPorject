@@ -516,7 +516,7 @@ Assets/ZomCity/
   - 实现口径：InputActions 只保留 Keyboard&Mouse bindings（或运行时过滤 Gamepad 设备）；保留一个未来可开启的开关/编译宏以便后续恢复
 - **测试场景快速搭建（落地方案）：**
   - 目标：任何人 5 分钟内能新建/重建三大测试场，并一键得到：像素化链路、事件查看器、玩家/相机/UI、基础刷怪刷物品入口、PPU/Ortho/DisplayRect 状态面板
-  - 场景清单（建议固定命名）：`Run_WeaponTest`、`Run_MonsterTest`、`Run_PickupTest`、`SafeHouse_Test`
+  - 场景清单（建议固定命名）：`WeaponTest`、`Run_MonsterTest`、`Run_PickupTest`、`SafeHouse_Test`
   - 工程化落地：
     1. 制作 `TestSceneBootstrap`（或 SceneTemplate）Prefab：自动创建/引用 PixelViewportManager、WorldRT 输出、UI Overlay、GameplayEventHub + Viewer、TimeSettingsGuard、基础灯光与地面
     2. 提供 Editor 菜单：`Tools/ZomCity/Create Test Scenes`，一键生成上述场景并放置 Bootstrap 与默认测试物体（靶子/刷怪点/箱子）
@@ -860,7 +860,7 @@ Assets/ZomCity/
 **回归要求：** 以上流程需用事件查看器确认关键事件可见（Noise / Damage / Pickup / Drop / Death / Save / Craft / Mod / Result）
 
 ### 测试场景快速搭建（M0 落地）
-- **场景清单：** `Run_WeaponTest`、`Run_MonsterTest`、`Run_PickupTest`、`SafeHouse_Test`
+- **场景清单：** `WeaponTest`、`Run_MonsterTest`、`Run_PickupTest`、`SafeHouse_Test`
 - **工程化落地：**
   1. 制作 `TestSceneBootstrap` Prefab：自动创建 PixelViewportManager、WorldRT、UI Overlay、GameplayEventHub + Viewer、TimeSettingsGuard、基础灯光与地面
   2. Editor 菜单：`Tools/ZomCity/Create Test Scenes`，一键生成测试场景
@@ -917,7 +917,7 @@ Assets/ZomCity/
 - VFXPoolBudget 报告：`TempLogs/ZomCityReports/VFXPoolBudgetReport_<yyyyMMdd_HHmmss>.json`
 
 ### 测试场景
-- 武器测试场：`Assets/ZomCity/Content/Scenes/Run_WeaponTest.unity`
+- 武器测试场：`Assets/ZomCity/Content/Scenes/WeaponTest.unity`
 - 怪物测试场：`Assets/ZomCity/Content/Scenes/Run_MonsterTest.unity`
 - 拾取测试区：`Assets/ZomCity/Content/Scenes/Run_PickupTest.unity`
 - 安全屋测试：`Assets/ZomCity/Content/Scenes/SafeHouse_Test.unity`

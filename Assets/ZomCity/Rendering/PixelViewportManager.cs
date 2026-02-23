@@ -20,6 +20,7 @@ namespace ZomCity
         }
 
         private const string MainCameraPrefabResourcePath = "ZomCity/MainCameraSidescroller";
+        private const string DisplayBridgeCameraName = "[ZomCity]DisplayBridgeCamera";
 
         public static PixelViewportManager Instance { get; private set; }
 
@@ -55,7 +56,7 @@ namespace ZomCity
         public Camera WorldCamera;
 
         [Header("MainCameraSidescroller Follow Defaults")]
-        public string DefaultFollowTargetTag = "Player";
+        public string DefaultFollowTargetTag = TagCatalog.Player;
         public string DefaultFollowTargetChildName = "";
         [Min(0.05f)] public float DefaultRebindInterval = 0.25f;
         [Min(0.1f)] public float DefaultLostTargetReportDelay = 1f;
@@ -97,7 +98,7 @@ namespace ZomCity
                 return Instance;
             }
 
-            var existing = FindAnyObjectByType<PixelViewportManager>();
+            var existing = FindPreferredExistingManager();
             if (existing != null)
             {
                 Instance = existing;
@@ -126,6 +127,34 @@ namespace ZomCity
             DontDestroyOnLoad(go);
             Instance = mgr;
             return mgr;
+        }
+
+        private static PixelViewportManager FindPreferredExistingManager()
+        {
+            var activeScene = SceneManager.GetActiveScene();
+            var managers = FindObjectsByType<PixelViewportManager>(FindObjectsSortMode.None);
+
+            PixelViewportManager fallback = null;
+            for (var i = 0; i < managers.Length; i++)
+            {
+                var manager = managers[i];
+                if (manager == null)
+                {
+                    continue;
+                }
+
+                if (activeScene.IsValid() && manager.gameObject.scene == activeScene)
+                {
+                    return manager;
+                }
+
+                if (fallback == null)
+                {
+                    fallback = manager;
+                }
+            }
+
+            return fallback != null ? fallback : FindAnyObjectByType<PixelViewportManager>();
         }
 
         private void Awake()
@@ -560,6 +589,11 @@ namespace ZomCity
             {
                 var cam = cameras[i];
                 if (cam == null || cam == WorldCamera)
+                {
+                    continue;
+                }
+
+                if (string.Equals(cam.name, DisplayBridgeCameraName, StringComparison.Ordinal))
                 {
                     continue;
                 }

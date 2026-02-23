@@ -1,0 +1,10 @@
+{
+    "Rows": [
+        {
+            "ContainerID": "CT_TEST_LOCKER",
+            "LootTableID": "LT_TEST_COMMON",
+            "SearchTime": 0.800000011920929,
+            "PrefabKey": "ZC/Containers/CT_TEST_LOCKER"
+        }
+    ]
+}

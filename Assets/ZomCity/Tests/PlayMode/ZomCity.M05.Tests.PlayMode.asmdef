@@ -1,0 +1,20 @@
+{
+  "name": "ZomCity.M05.Tests.PlayMode",
+  "rootNamespace": "ZomCity.Tests.PlayMode",
+  "references": [
+    "ZomCity.Core",
+    "ZomCity.Data"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false,
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ]
+}

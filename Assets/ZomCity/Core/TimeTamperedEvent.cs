@@ -53,4 +53,78 @@ namespace ZomCity
         public string Reason;
     }
 
+    public struct PlaneDriftEvent
+    {
+        public string EventId;
+        public int Frame;
+        public string Scene;
+        public string ActorId;
+        public float ObservedZ;
+        public float CorrectedZ;
+        public float MinAllowedZ;
+        public float MaxAllowedZ;
+    }
+
+
+    public struct DataMissingEvent
+    {
+        public string EventId;
+        public int Frame;
+        public string Scene;
+        public string ActorId;
+        public string DataDomain;
+        public string DataId;
+        public string DataVersion;
+        public string SaveVersion;
+        public string Reason;
+    }
+
+    public struct PrefabLoadFailedEvent
+    {
+        public string EventId;
+        public int Frame;
+        public string Scene;
+        public string ActorId;
+        public string PrefabKey;
+        public string DataVersion;
+        public string SaveVersion;
+        public string Reason;
+    }
+
+    public struct NoiseEvent
+    {
+        public string EventId;
+        public int Frame;
+        public string Scene;
+        public string ActorId;
+        public string WeaponId;
+        public float Radius;
+        public Vector3 SourcePosition;
+        public string Reason;
+    }
+
+    public struct DamageEvent
+    {
+        public string EventId;
+        public int Frame;
+        public string Scene;
+        public string ActorId;
+        public string WeaponId;
+        public string TargetId;
+        public float Amount;
+        public Vector3 HitPoint;
+        public Vector3 SourcePosition;
+    }
+
+    public struct PickupEvent
+    {
+        public string EventId;
+        public int Frame;
+        public string Scene;
+        public string ActorId;
+        public string ItemId;
+        public int Quantity;
+        public string Source;
+    }
+
 }

@@ -1,0 +1,14 @@
+{
+    "DataVersion": "M0_5_DEV_20260210_01",
+    "SaveVersion": "SV_0_0_1",
+    "ExportedAtUtc": "2026-02-11T00:45:32Z",
+    "SourceCdb": "Assets/ZomCity/Data/Design/ZomCityDesign.cdb",
+    "GeneratedFiles": [
+        "Settings.json",
+        "Items.json",
+        "Weapons.json",
+        "LootTables.json",
+        "Containers.json",
+        "AddressFallbackMap.json"
+    ]
+}

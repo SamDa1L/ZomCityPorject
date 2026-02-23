@@ -1,0 +1,24 @@
+{
+  "name": "ZomCity.M05.Tests.Editor",
+  "rootNamespace": "ZomCity.Tests.Editor",
+  "references": [
+    "ZomCity.Core",
+    "ZomCity.Data",
+    "ZomCity.Tools",
+    "ZomCity.M05.Tests.PlayMode"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false,
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ]
+}

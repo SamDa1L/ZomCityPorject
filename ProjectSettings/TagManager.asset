@@ -3,7 +3,11 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - DeadZone
+  - Enemy
+  - Interactable
+  - Container
   layers:
   - Default
   - TransparentFX
@@ -13,13 +17,13 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Ground
+  - Player
+  - Enemy
+  - Interactable
+  - Container
+  - Projectile
+  - OneWayPlatform
   - 
   - 
   - 

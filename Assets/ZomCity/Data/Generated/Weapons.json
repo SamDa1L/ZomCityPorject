@@ -1,0 +1,16 @@
+{
+    "Rows": [
+        {
+            "WeaponID": "WPN_TEST_PISTOL",
+            "ItemID": "WPN_TEST_PISTOL",
+            "MagSize": 12,
+            "Rate": 4.0,
+            "Damage": 15.0,
+            "Spread": 0.019999999552965165,
+            "Recoil": 0.18000000715255738,
+            "NoiseRadius": 8.0,
+            "ReloadTime": 1.399999976158142,
+            "PrefabKey": "ZC/Items/WPN_TEST_PISTOL"
+        }
+    ]
+}

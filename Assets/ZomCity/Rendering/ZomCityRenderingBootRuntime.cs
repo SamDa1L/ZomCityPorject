@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
@@ -11,10 +12,34 @@ namespace ZomCity
     /// </summary>
     public static class ZomCityRenderingBootRuntime
     {
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Init()
         {
-            var viewport = PixelViewportManager.EnsureExists();
+            var go = new GameObject("[ZomCity]RenderingBootInitRunner");
+            go.hideFlags = HideFlags.HideAndDontSave;
+            go.AddComponent<ZomCityRenderingBootInitRunner>();
+            UnityEngine.Object.DontDestroyOnLoad(go);
+        }
+
+        private sealed class ZomCityRenderingBootInitRunner : MonoBehaviour
+        {
+            private IEnumerator Start()
+            {
+                // 延后一帧再挂载渲染链路，避开编辑器备份场景恢复阶段。
+                yield return null;
+
+                var viewport = PixelViewportManager.EnsureExists();
+                AttachRuntimeChain(viewport);
+                Destroy(gameObject);
+            }
+        }
+
+        private static void AttachRuntimeChain(PixelViewportManager viewport)
+        {
+            if (viewport == null)
+            {
+                return;
+            }
 
             // Presenter 负责把 WorldRT 以整数倍最近邻方式输出到屏幕（UGUI 兜底实现）。
             var go = viewport.gameObject;
@@ -77,6 +102,11 @@ namespace ZomCity
                 go.AddComponent<CameraDebugPanel>();
             }
 
+            if (go.GetComponent<ZomCityDebugWindowHotkeyRouter>() == null)
+            {
+                go.AddComponent<ZomCityDebugWindowHotkeyRouter>();
+            }
+
             viewport.ApplyMainCameraDefaults();
 
             // 抑制旧 JU 相机资产，避免污染 M0.2 的 Time/Camera 基线。
@@ -87,10 +117,6 @@ namespace ZomCity
         }
     }
 
-    /// <summary>
-    /// M0.2 桥接层：通过 ProCamera2D 驱动 WorldCamera 跟随，
-    /// 同时保持 PixelViewportManager 作为渲染/相机主权入口。
-    /// </summary>
     [DefaultExecutionOrder(-9980)]
     public sealed class ZomCityProCameraDriver : MonoBehaviour
     {
@@ -102,7 +128,7 @@ namespace ZomCity
         public Transform FollowTarget;
 
         [Header("跟随目标")]
-        public string FollowTargetTag = "Player";
+        public string FollowTargetTag = TagCatalog.Player;
         public string FollowTargetChildName = "";
         [Min(0.05f)] public float RebindInterval = 0.25f;
         [Min(0.1f)] public float LostTargetReportDelay = 1f;
@@ -1974,14 +2000,34 @@ namespace ZomCity
         public ZomCityProCameraDriver Solver;
 
         [Header("调试发射")]
-        public LayerMask HitMask = ~0;
+        public LayerMask HitMask;
         [Min(1f)] public float MaxDistance = 200f;
         public bool DrawDebugLine = true;
         [Min(0f)] public float DebugLineDuration = 0.2f;
 
+        [Header("M0.6 \u4e8b\u4ef6")]
+        public bool PublishNoiseOnFire = true;
+        [Min(0.1f)] public float DebugNoiseRadius = 8f;
+        public bool PublishDamageOnHit = true;
+        [Min(0f)] public float DebugDamageAmount = 10f;
+        public string DebugWeaponId = "WPN_DEBUG";
+
         public Vector3 LastAimPoint { get; private set; }
         public int LastConsumedRequestFrame { get; private set; } = -1;
         public bool LastFireHadHit { get; private set; }
+
+        private void Reset()
+        {
+            HitMask = LayerCatalog.CombatHitMask;
+        }
+
+        private void Awake()
+        {
+            if (HitMask.value == 0)
+            {
+                HitMask = LayerCatalog.CombatHitMask;
+            }
+        }
 
         private void LateUpdate()
         {
@@ -2034,18 +2080,57 @@ namespace ZomCity
                 Debug.DrawLine(cameraPos, hitPoint, hasHit ? Color.green : Color.yellow, DebugLineDuration);
             }
 
+            var frame = Time.frameCount;
+            var scene = SceneManager.GetActiveScene().name;
+            var actorId = Solver != null && Solver.CurrentFollowTarget != null
+                ? Solver.CurrentFollowTarget.name
+                : (InputSampler != null ? InputSampler.ActorId : TagCatalog.Player);
+            var weaponId = string.IsNullOrWhiteSpace(DebugWeaponId) ? "WPN_DEBUG" : DebugWeaponId;
+
             GameplayEventHub.Publish(new FireConsumedEvent
             {
                 EventId = GameplayEventIds.CombatFireConsumed,
-                Frame = Time.frameCount,
-                Scene = SceneManager.GetActiveScene().name,
-                ActorId = Solver != null && Solver.CurrentFollowTarget != null ? Solver.CurrentFollowTarget.name : (InputSampler != null ? InputSampler.ActorId : "Player"),
+                Frame = frame,
+                Scene = scene,
+                ActorId = actorId,
                 RequestFrame = requestFrame,
                 ScreenPosition = screenPos,
                 AimPoint = aimPoint,
                 HasHit = hasHit,
                 HitPoint = hitPoint,
             });
+
+            if (PublishNoiseOnFire)
+            {
+                GameplayEventHub.Publish(new NoiseEvent
+                {
+                    EventId = GameplayEventIds.NoiseEmit,
+                    Frame = frame,
+                    Scene = scene,
+                    ActorId = actorId,
+                    WeaponId = weaponId,
+                    Radius = Mathf.Max(0.1f, DebugNoiseRadius),
+                    SourcePosition = cameraPos,
+                    Reason = "DebugFire",
+                });
+            }
+
+            if (PublishDamageOnHit && hasHit)
+            {
+                var targetId = hit.collider != null ? hit.collider.name : string.Empty;
+                GameplayEventHub.Publish(new DamageEvent
+                {
+                    EventId = GameplayEventIds.CombatDamage,
+                    Frame = frame,
+                    Scene = scene,
+                    ActorId = actorId,
+                    WeaponId = weaponId,
+                    TargetId = targetId,
+                    Amount = Mathf.Max(0f, DebugDamageAmount),
+                    HitPoint = hitPoint,
+                    SourcePosition = cameraPos,
+                });
+            }
         }
 
         private void EnsureRefs()
@@ -2467,6 +2552,74 @@ namespace ZomCity
     }
 
 
+    [DefaultExecutionOrder(9550)]
+    [DisallowMultipleComponent]
+    public sealed class ZomCityDebugWindowHotkeyRouter : MonoBehaviour
+    {
+        public bool EnableHotkeys = true;
+        public KeyCode ToggleAllKey = KeyCode.I;
+
+        [Header("?????")]
+        public CameraDebugPanel DebugPanel;
+        public GameplayEventViewer EventViewer;
+
+        private void Awake()
+        {
+            EnsureRefs();
+        }
+
+        private void Update()
+        {
+            if (!EnableHotkeys)
+            {
+                return;
+            }
+
+            EnsureRefs();
+            if (!ZomCityHotkeyInput.ReadCtrlModifiedKeyDown(ToggleAllKey))
+            {
+                return;
+            }
+
+            var anyVisible = (DebugPanel != null && DebugPanel.Visible)
+                             || (EventViewer != null && EventViewer.Visible);
+            var nextVisible = !anyVisible;
+
+            if (DebugPanel != null)
+            {
+                DebugPanel.Visible = nextVisible;
+            }
+
+            if (EventViewer != null)
+            {
+                EventViewer.Visible = nextVisible;
+            }
+        }
+
+        private void EnsureRefs()
+        {
+            if (DebugPanel == null)
+            {
+                DebugPanel = GetComponent<CameraDebugPanel>();
+            }
+
+            if (EventViewer == null)
+            {
+                if (GameplayEventViewer.Instance == null)
+                {
+                    GameplayEventViewer.EnsureExists();
+                }
+
+                EventViewer = GameplayEventViewer.Instance;
+                if (EventViewer == null)
+                {
+                    EventViewer = FindAnyObjectByType<GameplayEventViewer>();
+                }
+            }
+        }
+    }
+
+
     [DefaultExecutionOrder(9600)]
     [DisallowMultipleComponent]
     public sealed class CameraDebugPanel : MonoBehaviour
@@ -2493,6 +2646,12 @@ namespace ZomCity
         private string _dragFarAnchorYInput = "0.460";
         private string _dragFarSmoothnessInput = "0.130";
         private bool _dragFarInputsInitialized;
+        private string _pickupItemIdInput = "MAT_SCRAP";
+        private string _pickupQuantityInput = "1";
+        private string _pickupSourceInput = "DebugPanel";
+        private string _noiseRadiusInput = "8.0";
+        private string _noiseReasonInput = "DebugPanel";
+        private Vector2 _contentScroll;
 
         private void Awake()
         {
@@ -2511,11 +2670,7 @@ namespace ZomCity
 
         private bool WasTogglePressed()
         {
-#if ENABLE_INPUT_SYSTEM
-            return WasTogglePressedWithInputSystem();
-#else
-            return Input.GetKeyDown(ToggleKey);
-#endif
+            return ZomCityHotkeyInput.ReadKeyDown(ToggleKey);
         }
 
 #if ENABLE_INPUT_SYSTEM
@@ -2667,12 +2822,18 @@ namespace ZomCity
             var cam = Viewport.WorldCamera;
             var rect = Viewport.DisplayRect;
 
+            _contentScroll = GUILayout.BeginScrollView(
+                _contentScroll,
+                GUILayout.Width(_windowRect.width - 16f),
+                GUILayout.Height(_windowRect.height - 44f));
+
             GUILayout.Label($"RT: {Viewport.RtWidth}x{Viewport.RtHeight}  FitMode={Viewport.FitMode}  Scale={Viewport.IntegerScale}");
             GUILayout.Label($"DisplayRect: x={rect.x} y={rect.y} w={rect.width} h={rect.height}");
 
             if (Composer == null)
             {
-                GUILayout.Label("Composer 缺失");
+                GUILayout.Label("Composer missing");
+                GUILayout.EndScrollView();
                 GUILayout.EndVertical();
                 GUI.DragWindow();
                 return;
@@ -2813,8 +2974,144 @@ namespace ZomCity
                 GUILayout.Label($"LateAimPoint=({AimFireExecutor.LastAimPoint.x:F2},{AimFireExecutor.LastAimPoint.y:F2},{AimFireExecutor.LastAimPoint.z:F2})");
             }
 
+            GUILayout.Space(6f);
+            GUILayout.Label("M0.6 \u4e8b\u4ef6\u8c03\u8bd5");
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("PickupItem", GUILayout.Width(74f));
+            _pickupItemIdInput = GUILayout.TextField(_pickupItemIdInput, GUILayout.Width(104f));
+            GUILayout.Label("Qty", GUILayout.Width(24f));
+            _pickupQuantityInput = GUILayout.TextField(_pickupQuantityInput, GUILayout.Width(44f));
+            GUILayout.Label("Source", GUILayout.Width(48f));
+            _pickupSourceInput = GUILayout.TextField(_pickupSourceInput, GUILayout.Width(124f));
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("NoiseRadius", GUILayout.Width(74f));
+            _noiseRadiusInput = GUILayout.TextField(_noiseRadiusInput, GUILayout.Width(80f));
+            GUILayout.Label("Reason", GUILayout.Width(44f));
+            _noiseReasonInput = GUILayout.TextField(_noiseReasonInput, GUILayout.Width(166f));
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("\u53d1\u5e03Pickup\u4e8b\u4ef6"))
+            {
+                PublishDebugPickupEvent();
+            }
+
+            if (GUILayout.Button("\u53d1\u5e03Noise\u4e8b\u4ef6"))
+            {
+                PublishDebugNoiseEvent();
+            }
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(6f);
+            GUILayout.Label("M0.7 \u56de\u5f52\u5165\u53e3");
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("\u5237\u6b66\u5668\u5360\u4f4d"))
+            {
+                ZomCityTestSceneBootstrap.SpawnDebugWeaponPickup();
+            }
+
+            if (GUILayout.Button("\u5237\u5f39\u836f\u5360\u4f4d"))
+            {
+                ZomCityTestSceneBootstrap.SpawnDebugAmmoPickup();
+            }
+
+            if (GUILayout.Button("\u5237\u654c\u4eba\u5360\u4f4d"))
+            {
+                ZomCityTestSceneBootstrap.SpawnDebugEnemy();
+            }
+
+            if (GUILayout.Button("\u5237\u7269\u54c1\u5360\u4f4d"))
+            {
+                ZomCityTestSceneBootstrap.SpawnDebugItemPickup();
+            }
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("\u5237\u5bb9\u5668\u5360\u4f4d"))
+            {
+                ZomCityTestSceneBootstrap.SpawnDebugContainer();
+            }
+
+            if (GUILayout.Button("\u91cd\u5efa\u5f53\u524d\u573a\u666f\u57fa\u7ebf"))
+            {
+                ZomCityTestSceneBootstrap.EnsureSceneBaselineNow();
+            }
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("Time x0.5")) Time.timeScale = 0.5f;
+            if (GUILayout.Button("Time x1")) Time.timeScale = 1f;
+            if (GUILayout.Button("Time x2")) Time.timeScale = 2f;
+            GUILayout.EndHorizontal();
+            GUILayout.Label($"TimeScale={Time.timeScale:F2} FixedDT={Time.fixedDeltaTime:F4} MaxDT={Time.maximumDeltaTime:F4} vSync={QualitySettings.vSyncCount} targetFPS={Application.targetFrameRate}");
+
+            GUILayout.EndScrollView();
             GUILayout.EndVertical();
             GUI.DragWindow();
+        }
+
+        private void PublishDebugPickupEvent()
+        {
+            var itemId = string.IsNullOrWhiteSpace(_pickupItemIdInput) ? "MAT_SCRAP" : _pickupItemIdInput.Trim();
+            if (!int.TryParse(_pickupQuantityInput, out var quantity))
+            {
+                quantity = 1;
+            }
+
+            quantity = Mathf.Max(1, quantity);
+            var source = string.IsNullOrWhiteSpace(_pickupSourceInput) ? "DebugPanel" : _pickupSourceInput.Trim();
+
+            GameplayEventHub.Publish(new PickupEvent
+            {
+                EventId = GameplayEventIds.LootPickup,
+                Frame = Time.frameCount,
+                Scene = SceneManager.GetActiveScene().name,
+                ActorId = ResolveDebugActorId(),
+                ItemId = itemId,
+                Quantity = quantity,
+                Source = source,
+            });
+        }
+
+        private void PublishDebugNoiseEvent()
+        {
+            if (!float.TryParse(_noiseRadiusInput, out var radius))
+            {
+                radius = 8f;
+            }
+
+            radius = Mathf.Max(0.1f, radius);
+            var reason = string.IsNullOrWhiteSpace(_noiseReasonInput) ? "DebugPanel" : _noiseReasonInput.Trim();
+            var sourcePosition = Viewport != null && Viewport.WorldCamera != null
+                ? Viewport.WorldCamera.transform.position
+                : Vector3.zero;
+            var weaponId = AimFireExecutor != null && !string.IsNullOrWhiteSpace(AimFireExecutor.DebugWeaponId)
+                ? AimFireExecutor.DebugWeaponId
+                : "WPN_DEBUG";
+
+            GameplayEventHub.Publish(new NoiseEvent
+            {
+                EventId = GameplayEventIds.NoiseEmit,
+                Frame = Time.frameCount,
+                Scene = SceneManager.GetActiveScene().name,
+                ActorId = ResolveDebugActorId(),
+                WeaponId = weaponId,
+                Radius = radius,
+                SourcePosition = sourcePosition,
+                Reason = reason,
+            });
+        }
+
+        private string ResolveDebugActorId()
+        {
+            if (InputSampler != null && !string.IsNullOrWhiteSpace(InputSampler.ActorId))
+            {
+                return InputSampler.ActorId;
+            }
+
+            return TagCatalog.Player;
         }
 
         private void DrawDragZoomFarEditor()

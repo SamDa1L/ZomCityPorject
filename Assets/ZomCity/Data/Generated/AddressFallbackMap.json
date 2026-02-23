@@ -1,0 +1,12 @@
+{
+    "Rows": [
+        {
+            "Address": "ZC/Items/MAT_SCRAP",
+            "ResourcePath": "ZomCity/MainCameraSidescroller"
+        },
+        {
+            "Address": "ZC/Containers/CT_TEST_LOCKER",
+            "ResourcePath": "ZomCity/MainCameraSidescroller"
+        }
+    ]
+}
