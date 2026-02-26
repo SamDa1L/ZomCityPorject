@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &1
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3a2bfe4b8b24aeda8e0a8a218764800, type: 3}
+  m_Name: ZC_Rooms
+  m_EditorClassIdentifier:
+  m_GroupName: ZC_Rooms
+  m_GUID: aa000000000000000000000000000002
+  m_Entries:
+  - m_Guid: 3299f50706fb4861ace948857aec4561
+    m_Address: ZC/Rooms/RM_BG_PLACEHOLDER
+    m_ReadOnly: 0
+    m_Labels: []
+  - m_Guid: 748529469afc45909e7be9f0a163daab
+    m_Address: ZC/Rooms/RM_PLATFORM_GROUND
+    m_ReadOnly: 0
+    m_Labels: []
+  - m_Guid: fd9f9b64838a4e338fc7d9dfb4c13b82
+    m_Address: ZC/Rooms/RM_PLATFORM_ONEWAY
+    m_ReadOnly: 0
+    m_Labels: []
+  - m_Guid: 2eacd182e8b341acbace5229f1c8f72d
+    m_Address: ZC/Rooms/RM_PLATFORM_WALL
+    m_ReadOnly: 0
+    m_Labels: []
+  m_Schemas: []

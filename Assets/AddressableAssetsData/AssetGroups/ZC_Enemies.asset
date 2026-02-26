@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &1
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3a2bfe4b8b24aeda8e0a8a218764800, type: 3}
+  m_Name: ZC_Enemies
+  m_EditorClassIdentifier:
+  m_GroupName: ZC_Enemies
+  m_GUID: aa000000000000000000000000000001
+  m_Entries:
+  - m_Guid: db53dd44b8b24aeda8e0a8a218764809
+    m_Address: ZC/Enemies/EN_WALKER_PLACEHOLDER
+    m_ReadOnly: 0
+    m_Labels: []
+  - m_Guid: 0cce874be0074b5cb6b48ba82a785005
+    m_Address: ZC/Enemies/EN_PLAYER_PLACEHOLDER
+    m_ReadOnly: 0
+    m_Labels: []
+  m_Schemas: []
